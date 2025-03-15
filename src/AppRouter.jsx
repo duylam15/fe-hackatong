@@ -4,6 +4,7 @@ import LoginForm from "./LoginForm";
 import MindMap from "./MindMap";
 import MindMapGenerator from "./MindMapGenerator";
 import MainLayout from "./MainLayout";
+import Chat from "./Chat";
 
 const AppRouter = () => {
 	return (

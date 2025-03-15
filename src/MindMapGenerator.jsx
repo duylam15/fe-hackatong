@@ -6,6 +6,7 @@ import "./MindMapGenerator.css"; // Import file CSS
 import MindMap from "./MindMap";
 import Questions from "./questions";
 import SummaryBtn from "./SummaryBtn";
+import Chat from "./Chat";
 
 
 export default function MindMapGenerator() {
@@ -25,26 +26,54 @@ export default function MindMapGenerator() {
 		}
 
 		const formData = new FormData();
-		formData.append("file", fileList[0].originFileObj); // Chỉ gửi file đầu tiên
-		console.log("File chọn:", fileList[0]);
-
-		for (let pair of formData.entries()) {
-			console.log(pair[0], pair[1]);
-		}
+		formData.append("file", fileList[0].originFileObj);
 
 		try {
-			const response = await axios.post("http://127.0.0.1:8000/api/upload/", formData, {
+			// Gửi file lên backend
+			const uploadResponse = await axios.post("http://127.0.0.1:8000/api/upload/", formData, {
 				headers: { "Content-Type": "multipart/form-data" },
 			});
 
 			message.success("Tải lên thành công!");
-			console.log("Phản hồi từ server:", response.data.content);
-			setApiData(response.data.content)
+			console.log("Phản hồi từ server:", uploadResponse.data.content);
+
+			// Gọi API tóm tắt sau khi nhận được nội dung file
+			const summarizeResponse = await axios.post("http://127.0.0.1:8000/summarize-text/", {
+				text: uploadResponse.data.content,
+			});
+
+
+			// Cập nhật apiData
+			setApiData(summarizeResponse.data.summary);
+			message.success("Tóm tắt thành công!");
+			console.log("Phản hồi từ summarize:", summarizeResponse.data.summary);
+
+			// Chỉ lấy 10 từ đầu tiên
+			const shortSummary = summarizeResponse.data.summary.split(" ").slice(0, 20).join(" ");
+
+			// Lưu chủ đề vào backend
+			const chuDe = {
+				name_chu_de: "Chủ đề mới", // Bạn có thể thay đổi tên chủ đề theo ý muốn
+				noi_dung: shortSummary
+			};
+
+			console.log("Chủ đề sẽ lưu:", chuDe);
+
+
+			const response = await axios.post("http://localhost:8000/api/chude/", chuDe);
+			if (response.status === 201) {
+				message.success("Lưu chủ đề thành công! ID: " + response.data.id);
+				localStorage.setItem("idChuDe", response.data.id); // Lưu vào localStorage
+				console.log("Chủ đề đã lưu:", response.data);
+			}
+
 		} catch (error) {
-			message.error("Tải lên thất bại!");
-			console.error("Lỗi upload:", error);
+			message.error("Tải lên, tóm tắt hoặc lưu chủ đề thất bại!");
+			console.error("Lỗi:", error);
 		}
 	};
+
+
 
 	return (
 		<div className="container">
@@ -98,6 +127,7 @@ export default function MindMapGenerator() {
 				<SummaryBtn data={apiData} />
 				<Questions data={apiData} />
 				<MindMap data={apiData} />
+				<Chat />
 			</div>
 		</div>
 	);

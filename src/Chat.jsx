@@ -3,9 +3,7 @@ import axios from "axios";
 import { IoSend, IoMic, IoMicOff, IoVolumeHigh, IoChatbubbleEllipsesOutline, IoClose } from "react-icons/io5";
 import "./Chat.css";
 
-const Chat = ({ idUser = 1, idChuDe = 1 }) => {
-  console.log("idUser, idChuDe nhận vào:", idUser, idChuDe);
-
+const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [isListening, setIsListening] = useState(false);
@@ -95,8 +93,12 @@ const Chat = ({ idUser = 1, idChuDe = 1 }) => {
 
     try {
       console.log("Gửi tin nhắn tới API:", message);
+      const idChuDe = localStorage.getItem("idChuDe"); // Lấy ID chủ đề
+      const user = JSON.parse(localStorage.getItem("user"));
+      console.log("useruseruseruser", user.id)
+      console.log("useruseruseruser", idChuDe)
       const response = await axios.post("http://127.0.0.1:8000/chat-with-ai/", {
-        idUser: idUser,
+        idUser: user.id,
         idChuDe: idChuDe,
         message: message,
       });
@@ -193,9 +195,8 @@ const Chat = ({ idUser = 1, idChuDe = 1 }) => {
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`chat-message ${
-                  message.sender === "user" ? "user-message" : "ai-message"
-                }`}
+                className={`chat-message ${message.sender === "user" ? "user-message" : "ai-message"
+                  }`}
               >
                 <p>{message.text}</p>
                 <button
