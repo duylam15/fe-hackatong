@@ -8,6 +8,7 @@
     background-color: #fff;
     padding: 20px;
     text-align: center;
+    width: 100%;
 }
 
 /* Tiêu đề */
@@ -67,7 +68,7 @@
 /* Khu vực tải lên */
 .upload-box {
     margin-top: 30px;
-    width: 100%;
+    width: 78%;
     height: 300px;
     background: white;
     border-radius: 10px;

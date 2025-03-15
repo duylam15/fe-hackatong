@@ -1,17 +1,37 @@
 import React from "react";
-import { Form, Input, Button, Card } from "antd";
+import { Form, Input, Button, Card, message } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const LoginForm = () => {
 	const navigate = useNavigate(); // Hook điều hướng
 
-	const onFinish = (values) => {
-		console.log("Đăng nhập thành công:", values);
-		// Giả lập đăng nhập thành công -> Chuyển hướng
-		setTimeout(() => {
-			navigate("/"); // Chuyển về trang mindmap
-		}, 1000);
+	const onFinish = async (values) => {
+		console.log("values", values)
+		try {
+			const response = await axios.post("http://127.0.0.1:8000/check-user/", {
+				username: values.username,
+				password: values.password,
+			});
+
+
+			if (response.data) {
+				// Lưu vào localStorage
+				localStorage.setItem(
+					"user",
+					JSON.stringify({ id: response.data.id, name: values.username })
+				);
+
+				message.success("Đăng nhập thành công!");
+				navigate("/"); // Chuyển về trang mindmap
+			} else {
+				message.error("Sai tên đăng nhập hoặc mật khẩu!");
+			}
+		} catch (error) {
+			console.error("Lỗi khi đăng nhập:", error);
+			message.error("Có lỗi xảy ra khi đăng nhập!");
+		}
 	};
 
 	return (
@@ -23,22 +43,14 @@ const LoginForm = () => {
 						name="username"
 						rules={[{ required: true, message: "Vui lòng nhập tên đăng nhập!" }]}
 					>
-						<Input
-							prefix={<UserOutlined />}
-							placeholder="Tên đăng nhập"
-							style={styles.input}
-						/>
+						<Input prefix={<UserOutlined />} placeholder="Tên đăng nhập" style={styles.input} />
 					</Form.Item>
 
 					<Form.Item
 						name="password"
 						rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
 					>
-						<Input.Password
-							prefix={<LockOutlined />}
-							placeholder="Mật khẩu"
-							style={styles.input}
-						/>
+						<Input.Password prefix={<LockOutlined />} placeholder="Mật khẩu" style={styles.input} />
 					</Form.Item>
 
 					<Form.Item>

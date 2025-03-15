@@ -1,5 +1,5 @@
 .app {
-    background: #fff;
+    background: linear-gradient(to right, #ffddc1, #85e3ff);
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -24,6 +24,10 @@
 }
 
 .button {
+}
+
+.navbarrrr {
+    width: 100%;
 }
 
 .question-container {
@@ -61,6 +65,11 @@
     width: 1000px;
 }
 
+.heading-question {
+    font-size: 18px;
+    font-weight: 600;
+}
+
 .question-list h2 {
     color: #333;
     font-size: 20px;
@@ -85,6 +94,42 @@
 
 .question-list li:hover {
     transform: scale(1.02);
+}
+
+.options-list {
+    list-style: none;
+    padding: 0;
+}
+
+.option-item {
+    background: white;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.option-item:hover {
+    background: #e0e0e0;
+}
+
+.selected {
+    background: #ddd;
+}
+
+.correct {
+    background: #4caf50;
+}
+
+.answer-correct {
+    color: green;
+    font-weight: bold;
+}
+
+.answer-wrong {
+    color: red;
+    font-weight: bold;
 }
 
 .download-button {

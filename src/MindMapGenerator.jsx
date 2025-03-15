@@ -5,6 +5,7 @@ import axios from "axios";
 import "./MindMapGenerator.css"; // Import file CSS
 import MindMap from "./MindMap";
 import Questions from "./questions";
+import SummaryBtn from "./SummaryBtn";
 
 
 export default function MindMapGenerator() {
@@ -93,7 +94,8 @@ export default function MindMapGenerator() {
 				✨ Bắt đầu tạo
 			</Button>
 
-			<div style={{ width: "50vw", height: "100vh" }}>
+			<div style={{ width: "80vw", height: "100vh" }}>
+				<SummaryBtn data={apiData} />
 				<Questions data={apiData} />
 				<MindMap data={apiData} />
 			</div>

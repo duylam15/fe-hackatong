@@ -7,6 +7,7 @@ export default function Questions({ data }) {
 	const [questions, setQuestions] = useState([]);
 	const [showQuestions, setShowQuestions] = useState(false);
 	const [option, setOption] = useState(""); // Lựa chọn loại câu hỏi
+	const [selectedAnswers, setSelectedAnswers] = useState({}); // Lưu trạng thái các đáp án đã chọn
 
 	useEffect(() => {
 		console.log("Data generate-exercise nhận vào:", data);
@@ -18,8 +19,9 @@ export default function Questions({ data }) {
 					type: option, // Gửi loại câu hỏi được chọn
 				});
 
-				console.log("API generate-exercisegenerate-exercise:", response.data.exercise);
+				console.log("API response:", response.data.exercise);
 				setQuestions(response.data.exercise); // Lưu danh sách câu hỏi vào state
+				setSelectedAnswers({}); // Reset lại trạng thái chọn đáp án khi load câu hỏi mới
 			} catch (error) {
 				console.error("Lỗi khi gọi API:", error);
 			}
@@ -30,6 +32,13 @@ export default function Questions({ data }) {
 		}
 	}, [option, data]); // Khi option hoặc data thay đổi thì fetch API
 
+	// Xử lý khi người dùng chọn đáp án
+	const handleAnswerSelect = (questionIndex, answer) => {
+		setSelectedAnswers((prev) => ({
+			...prev,
+			[questionIndex]: answer,
+		}));
+	};
 	// Hàm tạo file Word và tải về
 	const handleDownloadWord = () => {
 		const doc = new Document({
@@ -74,7 +83,7 @@ export default function Questions({ data }) {
 							Điền vào chỗ trống
 						</label>
 						<label>
-								<input type="radio" name="questionType" value="short_answer" onChange={(e) => setOption(e.target.value)} />
+							<input type="radio" name="questionType" value="short_answer" onChange={(e) => setOption(e.target.value)} />
 							Tự luận
 						</label>
 						<label>
@@ -89,7 +98,35 @@ export default function Questions({ data }) {
 							<h2>Danh sách câu hỏi:</h2>
 							<ul>
 								{questions.map((q, index) => (
-									<li key={index}>{q.question}</li>
+									<li key={index} className="question-item">
+										{/* Nếu là trắc nghiệm thì hiển thị danh sách đáp án */}
+										{q.type === "multiple_choice" && q.options ? (
+											<ul className="options-list">
+												<p className="heading-question">Câu {index + 1}: {q.question}</p>
+												{q.options.map((option, i) => (
+													<div>
+														<li
+															key={i}
+															className={`option-item ${selectedAnswers[index] === option ? "selected" : ""} ${selectedAnswers[index] && selectedAnswers[index] === q.correct_answer ? "correct" : ""
+																}`}
+															onClick={() => handleAnswerSelect(index, option)}
+														>
+															{option}
+														</li>
+													</div>
+												))}
+											</ul>
+										) : (
+											<p className="heading-question">Câu {index + 1}: {q.question}</p>
+										)}
+
+										{/* Nếu đã chọn đáp án và đáp án đó đúng thì hiển thị thông báo */}
+										{selectedAnswers[index] && (
+											<p className={selectedAnswers[index] === q.correct_answer ? "answer-correct" : "answer-wrong"}>
+												{selectedAnswers[index] === q.correct_answer ? "✅ Chính xác!" : "❌ Sai! Đáp án đúng là: " + q.correct_answer}
+											</p>
+										)}
+									</li>
 								))}
 							</ul>
 							<button className="download-button" onClick={handleDownloadWord}>

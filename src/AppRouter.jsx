@@ -1,14 +1,16 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginForm from "./LoginForm";
-import MindMap from "./MindMap";
 import MindMapGenerator from "./MindMapGenerator";
+import MainLayout from "./MainLayout";
 
 const AppRouter = () => {
 	return (
 		<Router>
 			<Routes>
-				<Route path="/" element={<MindMapGenerator />} />
+				<Route element={<MainLayout />}>
+					<Route path="/" element={<MindMapGenerator />} />
+				</Route>
 				<Route path="/login" element={<LoginForm />} />
 			</Routes>
 		</Router>
