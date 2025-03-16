@@ -53,7 +53,7 @@ export default function MindMapGenerator() {
 
 			// Lưu chủ đề vào backend
 			const chuDe = {
-				name_chu_de: "Chủ đề mới", // Bạn có thể thay đổi tên chủ đề theo ý muốn
+				name_chu_de: summarizeResponse.data.title, // Bạn có thể thay đổi tên chủ đề 
 				noi_dung: shortSummary
 			};
 
@@ -78,21 +78,12 @@ export default function MindMapGenerator() {
 	return (
 		<div className="container">
 			{/* Tiêu đề */}
-			<h1 className="title">Trình tạo sơ đồ tư duy AI</h1>
+			<h1 className="title">Tổng hợp, luyện tập, tiến bộ - Tất cả trong một</h1>
 			<h2 className="subtitle">Hình dung mọi thứ</h2>
 			<p className="description">
-				Biến ý tưởng thành bản đồ tư duy rõ ràng, hấp dẫn trong vài giây, từ đầu vào văn bản đến video.
+				Trình tạo sơ đồ tư duy, tạo bài tập và hỏi đáp cùng AI
 			</p>
 
-			{/* Thanh chọn kiểu tải lên */}
-			<div className="upload-options">
-				<button className="option">📌 Lời gợi ý đơn giản</button>
-				<button className="option active">📄 PDF / Tài liệu</button>
-				<button className="option">📝 Văn bản dài</button>
-				<button className="option">🌐 Trang web</button>
-				<button className="option">🎥 YouTube</button>
-				<button className="option">🖼 Hình ảnh</button>
-			</div>
 
 			{/* Khu vực tải lên */}
 			<div className="upload-box">

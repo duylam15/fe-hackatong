@@ -189,7 +189,7 @@ const Chat = () => {
       {isChatOpen && (
         <div className="chat-window">
           <div className="chat-header">
-            <h2>Chat về gia đình</h2>
+            <h2>Chat</h2>
           </div>
           <div className="chat-body">
             {messages.map((message, index) => (

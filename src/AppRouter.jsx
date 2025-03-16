@@ -5,6 +5,7 @@ import MindMap from "./MindMap";
 import MindMapGenerator from "./MindMapGenerator";
 import MainLayout from "./MainLayout";
 import Chat from "./Chat";
+import RegisterForm from "./RegisterForm";
 
 const AppRouter = () => {
 	return (
@@ -15,6 +16,7 @@ const AppRouter = () => {
 					<Route path="/chat" element={<Chat />} />
 				</Route>
 				<Route path="/login" element={<LoginForm />} />
+				<Route path="/register" element={<RegisterForm />} />
 			</Routes>
 		</Router>
 	);

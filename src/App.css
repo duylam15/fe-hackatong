@@ -6,6 +6,15 @@
     flex-direction: column;
 }
 
+.imgLogo {
+    width: 40px;
+    height: 40px;
+}
+
+.imgtext{
+    margin-left: 10px;
+}
+
 .heading {
     font-size: 40px;
     font-weight: 700;

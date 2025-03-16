@@ -1,49 +1,53 @@
 import React from "react";
 import { Form, Input, Button, Card, message } from "antd";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { LockOutlined, UserOutlined, MailOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const LoginForm = () => {
+const RegisterForm = () => {
 	const navigate = useNavigate(); // Hook điều hướng
 
 	const onFinish = async (values) => {
-		console.log("values", values)
+		console.log("values", values);
 		try {
-			const response = await axios.post("http://127.0.0.1:8000/check-user/", {
+			const response = await axios.post("http://127.0.0.1:8000/register/", {
 				username: values.username,
+				email: values.email,
 				password: values.password,
 			});
 
-
-			if (response.data) {
-				// Lưu vào localStorage
-				localStorage.setItem(
-					"user",
-					JSON.stringify({ id: response.data.id, name: values.username })
-				);
-
-				message.success("Đăng nhập thành công!");
-				navigate("/"); // Chuyển về trang mindmap
+			if (response.status === 201) {
+				message.success("Đăng ký thành công! Hãy đăng nhập.");
+				navigate("/login"); // Chuyển hướng về trang đăng nhập
 			} else {
-				message.error("Sai tên đăng nhập hoặc mật khẩu!");
+				message.error("Đăng ký thất bại!");
 			}
 		} catch (error) {
-			console.error("Lỗi khi đăng nhập:", error);
-			message.error("Có lỗi xảy ra khi đăng nhập!");
+			console.error("Lỗi khi đăng ký:", error);
+			message.error("Có lỗi xảy ra khi đăng ký!");
 		}
 	};
 
 	return (
 		<div style={styles.container}>
 			<Card style={styles.card}>
-				<h2 style={styles.title}>🧠 MindMap Login</h2>
-				<Form name="login" onFinish={onFinish} layout="vertical">
+				<h2 style={styles.title}>📝 Đăng ký tài khoản</h2>
+				<Form name="register" onFinish={onFinish} layout="vertical">
 					<Form.Item
 						name="username"
 						rules={[{ required: true, message: "Vui lòng nhập tên đăng nhập!" }]}
 					>
 						<Input prefix={<UserOutlined />} placeholder="Tên đăng nhập" style={styles.input} />
+					</Form.Item>
+
+					<Form.Item
+						name="email"
+						rules={[
+							{ required: true, message: "Vui lòng nhập email!" },
+							{ type: "email", message: "Email không hợp lệ!" },
+						]}
+					>
+						<Input prefix={<MailOutlined />} placeholder="Email" style={styles.input} />
 					</Form.Item>
 
 					<Form.Item
@@ -55,17 +59,17 @@ const LoginForm = () => {
 
 					<Form.Item>
 						<Button type="primary" htmlType="submit" style={styles.button}>
-							Đăng nhập
+							Đăng ký
 						</Button>
 					</Form.Item>
-					<div onClick={() => navigate("/register")}>Đăng kí</div>
+					<div onClick={() => navigate("/login")}>Đăng nhập</div>
 				</Form>
 			</Card>
 		</div>
 	);
 };
 
-// Style cho form login
+// Style cho form đăng ký
 const styles = {
 	container: {
 		display: "flex",
@@ -99,4 +103,4 @@ const styles = {
 	},
 };
 
-export default LoginForm;
+export default RegisterForm;

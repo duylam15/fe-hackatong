@@ -22,7 +22,10 @@ export default function Navbar() {
 	return (
 		<nav style={styles.navbar}>
 			{/* Logo bên trái */}
-			<div style={styles.logo}>🌍 MindMap</div>
+			<div style={styles.logo}>
+				<img src="/public/mind body green.png" className="imgLogo" alt="" />
+				<p className="imgtext">EduMind</p>
+			</div>
 
 			{/* Hiển thị tên user nếu đã đăng nhập, nếu chưa thì hiển thị nút Đăng nhập */}
 			<div
@@ -63,8 +66,17 @@ const styles = {
 		background: "#add4fd",
 		width: "1325px",
 	},
+	imgLogo: {
+		width: "10px",
+		height: "10px",
+		padding: "0 10px 0 0px",
+	},
 	logo: {
+		display: "flex",
+		justifyContent: "center",
+		alignItems: "center",
 		cursor: "pointer",
+
 	},
 	userContainer: {
 		position: "relative",
