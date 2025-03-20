@@ -3,46 +3,42 @@ import ReactFlow, { Controls, Background } from "reactflow";
 import "reactflow/dist/style.css";
 import { toPng } from "html-to-image";
 import axios from "axios";
+import { Button } from "antd";
+import Questions from "../Question/questions";
+import { motion, AnimatePresence } from "framer-motion";
+import { Spin } from "antd";
+
 
 const MindMap = (data) => {
-	console.log("data MindMapMindMapMindMap", data.data)
+	console.log("data MindMap", data.data);
 	const [summary, setSummary] = useState(null);
+	const [showQuestions, setShowQuestions] = useState(false); // State để điều khiển hiển thị
+	const mindmapRef = useRef(null);
 
-	console.log("summary", summary)
+	const [loading, setLoading] = useState(false); // Thêm state loading
 
 	useEffect(() => {
-		console.log("Data nhận vào:", data.data);
 		const fetchSummary = async () => {
+			setLoading(true); // Bật loading
 			try {
 				const response = await axios.post("http://127.0.0.1:8000/summarize/", {
 					text: data?.data,
 					mode: "normal",
 				});
-
-				console.log("API ResponseResponseResponseResponse:", response.data.summary);
-				setSummary(response.data.summary); // Cập nhật state với kết quả tóm tắt
-				console.log("summary Response", summary)
+				setSummary(response.data.summary);
 			} catch (error) {
 				console.error("Lỗi khi gọi API:", error);
+			} finally {
+				setLoading(false); // Tắt loading
 			}
 		};
 
-		if (data?.data) {
-			fetchSummary();
-		}
+		if (data?.data) fetchSummary();
 	}, [data]);
-
-
-
-	console.log("summary", summary)
-
 	const generateNodesAndEdges = (data, parentId = null, x = 0, y = 0, depth = 0) => {
 		let nodes = [];
 		let edges = [];
-
 		const id = `${parentId ? parentId + "-" : ""}${data.title}`;
-
-		// Mảng màu theo cấp độ
 		const colors = ["#FFDDC1", "#FFABAB", "#FFC3A0", "#D5AAFF", "#85E3FF", "#B9FBC0"];
 		const nodeColor = colors[depth % colors.length];
 
@@ -103,19 +99,13 @@ const MindMap = (data) => {
 		}
 	}, [summary]);
 
-
-
-	const mindmapRef = useRef(null);
-
 	const handleDownload = () => {
 		if (mindmapRef.current) {
-			// Ẩn Controls trước khi chụp
 			const controls = mindmapRef.current.querySelector(".react-flow__controls");
 			if (controls) controls.style.display = "none";
 
 			toPng(mindmapRef.current)
 				.then((dataUrl) => {
-					// Hiện lại Controls sau khi chụp
 					if (controls) controls.style.display = "block";
 
 					const link = document.createElement("a");
@@ -125,37 +115,82 @@ const MindMap = (data) => {
 				})
 				.catch((err) => {
 					console.error("Lỗi khi tải ảnh:", err);
-					// Hiện lại Controls nếu có lỗi
 					if (controls) controls.style.display = "block";
 				});
 		}
 	};
 
 	return (
-		<div style={{ width: "100%", height: "600px", border: "1px solid #ddd", position: "relative" }}>
-			<button
-				onClick={handleDownload}
-				style={{
-					position: "absolute",
-					top: 10,
-					right: 10,
-					padding: "8px 12px",
-					backgroundColor: "#007BFF",
-					color: "#fff",
-					border: "none",
-					borderRadius: "5px",
-					cursor: "pointer",
-					zIndex: 10,
-				}}
-			>
-				📥 Tải Mindmap
-			</button>
-			<div ref={mindmapRef} style={{ width: "100%", height: "100%" }}>
-				<ReactFlow nodes={elements.nodes} edges={elements.edges}>
-					<Controls />
-					<Background />
-				</ReactFlow>
-			</div>
+		<div style={{ width: "100%", height: "100vh", overflow: "hidden", position: "relative" }}>
+			<AnimatePresence mode="wait">
+				{!showQuestions ? (
+					<motion.div
+						key="mindmap"
+						initial={{ x: 0 }}
+						animate={{ x: 0 }}
+						exit={{ x: "-100%", opacity: 0 }}
+						transition={{ duration: 0.4 }}
+						style={{ width: "100%", height: "100%" }}
+					>
+						<div style={{ width: "80%", height: "80vh", border: "1px solid #ddd", margin: "auto", position: "relative" }}>
+							<button
+								onClick={handleDownload}
+								style={{
+									position: "absolute",
+									top: 10,
+									right: 10,
+									padding: "8px 12px",
+									backgroundColor: "#007BFF",
+									color: "#fff",
+									border: "none",
+									borderRadius: "5px",
+									cursor: "pointer",
+									zIndex: 10,
+								}}
+							>
+								📥 Tải Mindmap
+							</button>
+
+							<div ref={mindmapRef} style={{ width: "95%", height: "100%", marginLeft: "20px" }}>
+								{loading ? (
+									<div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+										<Spin size="large" tip="Đang tải dữ liệu..." />
+									</div>
+								) : (
+									<ReactFlow nodes={elements.nodes} edges={elements.edges}>
+										<Controls />
+										<Background />
+									</ReactFlow>
+								)}
+							</div>
+
+
+							<Button
+								type="default"
+								size="large"
+								className="back-button-mindmap"
+								onClick={() => setShowQuestions(true)}
+							>
+								Làm bài tập
+							</Button>
+						</div>
+					</motion.div>
+				) : (
+					<motion.div
+						key="questions"
+						initial={{ x: "100%", opacity: 0 }}
+						animate={{ x: 0, opacity: 1 }}
+						exit={{ x: "100%", opacity: 0 }}
+						transition={{ duration: 0.4 }}
+						style={{ width: "100%", height: "100%" }}
+					>
+						<Questions data={data.data} />
+						<Button type="default" size="large" className="question-back-BTN" onClick={() => setShowQuestions(false)}>
+							⬅ Quay lại
+						</Button>
+					</motion.div>
+				)}
+			</AnimatePresence>
 		</div>
 	);
 };

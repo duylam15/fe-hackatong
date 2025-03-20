@@ -60,11 +60,11 @@ const styles = {
 		justifyContent: "space-between",
 		alignItems: "center",
 		color: "white",
-		padding: "10px 170px",
+		padding: "10px 190px",
 		fontSize: "18px",
 		fontWeight: "bold",
 		background: "#add4fd",
-		width: "1325px",
+		width: "100%",
 	},
 	imgLogo: {
 		width: "10px",

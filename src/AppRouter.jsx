@@ -1,11 +1,11 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LoginForm from "./LoginForm";
-import MindMap from "./MindMap";
-import MindMapGenerator from "./MindMapGenerator";
-import MainLayout from "./MainLayout";
-import Chat from "./Chat";
-import RegisterForm from "./RegisterForm";
+import LoginForm from "./components/Auth/LoginForm";
+import MindMap from "./components/Mindmap/MindMap";
+import MindMapGenerator from "./components/Mindmap/MindMapGenerator";
+import MainLayout from "./components/MainLayout";
+import Chat from "./components/Chat/Chat";
+import RegisterForm from "./components/Auth/RegisterForm";
 
 const AppRouter = () => {
 	return (

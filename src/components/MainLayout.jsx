@@ -4,7 +4,7 @@ import Navbar from "./Navbar"; // Nếu có thanh điều hướng
 
 const MainLayout = () => {
 	return (
-		<div>
+		<div className="layout">
 			<div className="navbarrrr"><Navbar /></div>
 			<div className="content">
 				<Outlet />
