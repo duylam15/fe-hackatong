@@ -111,6 +111,7 @@
 
 /* Nút bắt đầu */
 .start-button {
+    border: none;
     margin-top: 20px;
     background: #b8e4ff;
     color: black;
@@ -120,7 +121,8 @@
 
 .start-button:hover {
     background: #4191ec;
-    color: red;
+    color: #fff;
+    transition: all ease 0.3s;
 }
 
 .overlay {

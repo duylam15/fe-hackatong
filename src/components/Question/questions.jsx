@@ -12,6 +12,8 @@ export default function Questions({ data }) {
 	const [selectedAnswers, setSelectedAnswers] = useState({}); // Lưu trạng thái các đáp án đã chọn
 	const [submittedAnswers, setSubmittedAnswers] = useState({});
 	const [loading, setLoading] = useState(false); // Thêm state loading
+	const [submittedMCAnswers, setSubmittedMCAnswers] = useState({}); // Lưu trạng thái câu trả lời trắc nghiệm đã chọn
+
 
 	useEffect(() => {
 		console.log("Data generate-exercise nhận vào:", data);
@@ -38,6 +40,19 @@ export default function Questions({ data }) {
 			fetchExercise();
 		}
 	}, [option, data]);
+
+	// Xử lý khi người dùng chọn đáp án trắc nghiệm
+	const handleMCAnswerSelect = (questionIndex, answer, correctAnswer) => {
+		setSelectedAnswers((prev) => ({
+			...prev,
+			[questionIndex]: answer,
+		}));
+
+		setSubmittedMCAnswers((prev) => ({
+			...prev,
+			[questionIndex]: answer === correctAnswer,
+		}));
+	};
 	// Xử lý khi người dùng chọn đáp án
 	const handleAnswerSelect = (questionIndex, answer) => {
 		setSelectedAnswers((prev) => ({
@@ -75,15 +90,15 @@ export default function Questions({ data }) {
 			{/* Chọn loại câu hỏi */}
 			<div className="options-container">
 				<label>
-					<input type="radio" name="questionType" value="short_answer" onChange={(e) => setOption(e.target.value)} defaultChecked />
+					<input type="radio" name="questionType" value="short_answer" onChange={(e) => setOption(e.target.value)} defaultChecked disabled={loading} />
 					Tự luận
 				</label>
 				<label>
-					<input type="radio" name="questionType" value="multiple_choice" onChange={(e) => setOption(e.target.value)} />
+					<input type="radio" name="questionType" value="multiple_choice" onChange={(e) => setOption(e.target.value)} disabled={loading} />
 					Trắc nghiệm
 				</label>
 				<label>
-					<input type="radio" name="questionType" value="fill_in_the_blank" onChange={(e) => setOption(e.target.value)} />
+					<input type="radio" name="questionType" value="fill_in_the_blank" onChange={(e) => setOption(e.target.value)} disabled={loading} />
 					Điền vào chỗ trống
 				</label>
 			</div>
@@ -108,12 +123,17 @@ export default function Questions({ data }) {
 											<div className="option-item-group" key={i}>
 												<div
 													className={`option-item ${selectedAnswers[index] === option ? "selected" : ""}`}
-													onClick={() => setSelectedAnswers((prev) => ({ ...prev, [index]: option }))}
+													onClick={() => handleMCAnswerSelect(index, option, q.correct_answer)} // Gọi xử lý kiểm tra
 												>
 													{option}
 												</div>
 											</div>
 										))}
+										{submittedMCAnswers[index] !== undefined && (
+											<p className={submittedMCAnswers[index] ? "answer-correct" : "answer-wrong"}>
+												{submittedMCAnswers[index] ? "✅ Chính xác!" : `❌ Sai! Đáp án đúng là: ${q.correct_answer}`}
+											</p>
+										)}
 									</ul>
 								) : q.type === "fill_in_the_blank" ? (
 									<>
@@ -157,7 +177,7 @@ export default function Questions({ data }) {
 					</ul>
 				)}
 				{!loading && (
-					<button className="download-button" onClick={() => console.log("Download Word")}>
+					<button className="download-button" onClick={handleDownloadWord}>
 						📄 Tải câu hỏi dưới dạng Word
 					</button>
 				)}

@@ -5,6 +5,7 @@ import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion"; // Import Framer Motion
 import "./MindMapGenerator.css";
 import MindMap from "./MindMap";
+import SummaryBtn from "../SummaryBtn";
 
 export default function MindMapGenerator() {
 	const [fileList, setFileList] = useState([]);
@@ -72,16 +73,22 @@ export default function MindMapGenerator() {
 				}
 			}
 
+			console.log("summarizeResponsesummarizeResponsesummarizeResponsesummarizeResponse", summarizeResponse)
+
 			const shortSummary = summarizeResponse.data.summary.split(" ").slice(0, 20).join(" ");
 			const chuDe = {
 				name_chu_de: summarizeResponse.data.title,
 				noi_dung: shortSummary,
 			};
 
+			console.log("chuDe", chuDe)
+
 			const response = await axios.post("http://localhost:8000/api/chude/", chuDe);
 			if (response.status === 201) {
 				message.success("Lưu chủ đề thành công! ID: " + response.data.id);
 				localStorage.setItem("idChuDe", response.data.id);
+				localStorage.setItem("tenChuDe", response.data.name_chu_de);
+				localStorage.setItem("NoidungChuDe", response.data.noi_dung);
 				setProgress(100);
 				setWatchMindMap(true)
 			}
@@ -106,6 +113,8 @@ export default function MindMapGenerator() {
 	const handleBack = () => {
 		setShowMindMap(false);
 	};
+
+	console.log("apiDataapiDataapiData", apiData)
 
 	return (
 		<div className="main-container">
@@ -160,6 +169,7 @@ export default function MindMapGenerator() {
 							<Button type="primary" size="large" className="start-button" disabled={loading} onClick={() => handleUpload("detail")}>
 								✨ Tóm tắt chi tiết
 							</Button>
+							{watchMindMap ? <SummaryBtn data={apiData} /> : <></>}
 							{watchMindMap ? <Button type="primary" size="large" className="start-button" disabled={loading} onClick={handleShowMindMap}>
 								✨ Xem MindMap
 							</Button> : <></>}

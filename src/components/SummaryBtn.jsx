@@ -4,31 +4,10 @@ import { saveAs } from "file-saver";
 import { Document, Packer, Paragraph, TextRun } from "docx";
 
 export default function SummaryBtn({ data }) {
-	const [summary, setSummary] = useState("");
-
-	useEffect(() => {
-		if (!data) return;
-
-		console.log("Data summarize-text nhận vào:", data);
-
-		const fetchSummary = async () => {
-			try {
-				const response = await axios.post("http://127.0.0.1:8000/summarize-text/", {
-					text: data,
-				});
-				console.log("API response summarize:", response.data.summary);
-				setSummary(response.data.summary);
-			} catch (error) {
-				console.error("Lỗi khi gọi API:", error);
-			}
-		};
-
-		fetchSummary();
-	}, [data]);
 
 	// Hàm tạo file Word và tải về
 	const handleDownloadWord = () => {
-		if (!summary) {
+		if (!data) {
 			alert("Chưa có nội dung tóm tắt để tải!");
 			return;
 		}
@@ -42,7 +21,7 @@ export default function SummaryBtn({ data }) {
 							children: [new TextRun({ text: "Bản Tóm Tắt", bold: true, size: 28 })],
 						}),
 						new Paragraph({
-							children: [new TextRun({ text: summary, size: 24 })],
+							children: [new TextRun({ text: data, size: 24 })],
 						}),
 					],
 				},
@@ -56,7 +35,7 @@ export default function SummaryBtn({ data }) {
 
 	return (
 		<div className="summary-container">
-			<button className="download-button" onClick={handleDownloadWord}>
+			<button className="start-button" onClick={handleDownloadWord}>
 				📄 Tải tóm tắt dưới dạng Word
 			</button>
 		</div>
